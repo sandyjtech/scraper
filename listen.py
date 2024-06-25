@@ -82,11 +82,12 @@ def analyze_text(text, lemur_response, terms):
 # Define resource classes
 class AnalyzeCall(Resource):
     def post(self):
-        parser = reqparse.RequestParser()
-        parser.add_argument('file_url', type=str, required=True, help="File URL is required")
-        args = parser.parse_args()
         
-        file_url = args['file_url']
+        data = request.get_json()
+        file_url = data.get('file_url', None)
+
+        if not file_url:
+            return {'error': 'File URL is required'}, 400
 
         # Configuration for transcription
         config = aai.TranscriptionConfig(auto_highlights=True, speaker_labels=True)
@@ -123,6 +124,6 @@ class AnalyzeCall(Resource):
             "analysis": analysis_result
         }
 
-        return make_response(response)
+        return jsonify(response)
 
 
