@@ -1,0 +1,7 @@
+# pack-refs with: peeled fully-peeled sorted 
+c5208697f59f9dd7e84fe4dd2a140387e3278f31 refs/heads/main
+dd9d743f78085cde8968c2173162fb5642a57ef6 refs/heads/sandy-remote
+33df040bada1649d2397225b0468c9e9ce483a47 refs/pull/1/head
+9e73572f38631234477997641a528a64b7229390 refs/pull/2/head
+dd9d743f78085cde8968c2173162fb5642a57ef6 refs/pull/3/head
+af9e858fd9cf8cf1152b0451d00a972dcd96f979 refs/pull/4/head
