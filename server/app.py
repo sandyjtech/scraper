@@ -4,15 +4,19 @@ from flask_restful import Api
 from flask_cors import CORS
 from listen import AnalyzeCall
 from scraper import Scraper
-from wordpress import WordpressPage
-from get_audio import PlaybackAudioResource, ProcessExcelFile
+from scraper.server.wordpress import WordpressPage
+from scraper.server.get_audio import PlaybackAudioResource, ProcessExcelFile
 
 app = Flask(__name__)
 CORS(app)
 api = Api(app)
 
 @app.route("/")
-def index():
+@app.route("/<int:id>")
+def index(id=0):
+    return render_template("index.html")
+@app.errorhandler(404)
+def not_found(e):
     return render_template("index.html")
     
 
