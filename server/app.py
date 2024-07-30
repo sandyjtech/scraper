@@ -4,8 +4,8 @@ from flask_restful import Api
 from flask_cors import CORS
 from listen import AnalyzeCall
 from scraper import Scraper
-from scraper.server.wordpress import WordpressPage
-from scraper.server.get_audio import PlaybackAudioResource, ProcessExcelFile
+from wordpress import WordpressPage
+from get_audio import PlaybackAudioResource, ProcessExcelFile
 
 app = Flask(__name__)
 CORS(app)
