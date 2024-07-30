@@ -7,7 +7,12 @@ from scraper import Scraper
 from wordpress import WordpressPage
 from get_audio import PlaybackAudioResource, ProcessExcelFile
 
-app = Flask(__name__)
+app = Flask(
+    __name__,
+    static_url_path='',
+    static_folder='../client/build',
+    template_folder='../client/build'
+)
 CORS(app)
 api = Api(app)
 
@@ -28,5 +33,5 @@ api.add_resource(WordpressPage, '/wordpress-page')
 api.add_resource(PlaybackAudioResource, "/audio-file/<string:id>")
 api.add_resource(ProcessExcelFile, "/get-connex-audio-files")
 
-if __name__ == "__main__":
-    app.run(debug=True)
+if __name__ == '__main__':
+    app.run(port=5555, debug=True)
