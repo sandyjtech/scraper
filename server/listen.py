@@ -1,4 +1,4 @@
-from flask import Flask, request, jsonify
+from flask import Flask, make_response, request, jsonify
 from flask_restful import Api, Resource
 import assemblyai as aai
 import json
@@ -202,7 +202,7 @@ def format_transcript_by_speaker(transcript):
     current_text = []
 
     # Extract words and segments
-    words = transcript.words
+    words = [word.text if isinstance(word, aai.Word) else word for word in transcript.words]  # Ensure words are strings
     segments = getattr(transcript, 'segments', None)
 
     if segments:
@@ -231,7 +231,6 @@ def format_transcript_by_speaker(transcript):
         speaker_transcript.append(f"Speaker 1: {' '.join(words)}")
 
     return '\n'.join(speaker_transcript)
-
 # Define the AnalyzeCall class as a Flask Resource
 class AnalyzeCall(Resource):
     def post(self):
@@ -271,19 +270,34 @@ If HVAC was mentioned, note if the unit was not cooling, heating, or working/tur
 Check for any complaints about an employee. Separate the transcript by speaker with new line
 """
             # Lemur task processing
-            result = transcript.lemur.task(prompt)
-
+            result = transcript.lemur.task(prompt, max_output_size=4000)
+            # Extract the response from Lemur task
+            lemur_response = result.response
+            
+            # Convert lemur_response to a JSON-serializable format if it's a dictionary
+            if isinstance(lemur_response, dict):
+                lemur_response = json.dumps(lemur_response)
+            
             # Analyze the transcript text
-            analysis_result = analyze_text(transcript.text, result.response, terms)  # Assuming 'terms' is defined somewhere
+            analysis_result = analyze_text(transcript.text, lemur_response, terms)  # Assuming 'terms' is defined somewhere
 
             # Create the JSON response
-            response = {
+            response_data = {
                 "transcript": formatted_transcript,
-                "lemur_response": result.response,
+                "lemur_response": lemur_response,
                 "analysis": analysis_result
             }
 
-            return jsonify(response), 200
+            response_json = json.dumps(response_data)
+
+            # Create the Flask response object
+            response = make_response(response_json, 200)
+            response.headers['Content-Type'] = 'application/json'
+
+            return response
+
+        except Exception as e:
+            return {'error': str(e)}, 500
 
         except Exception as e:
             return {'error': str(e)}, 500
